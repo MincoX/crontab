@@ -106,7 +106,7 @@ func Login(ctx *gin.Context) {
 	   secure	bool	Secure=true，那么这个cookie只能用https协议发送给服务器
 	   httpOnly	bool	设置HttpOnly=true的cookie不能被js获取到
 	*/
-	ctx.SetCookie("jwt_token", token, common.GConfig.Http.LoginExpire, "/", "127.0.0.1", false, true)
+	ctx.SetCookie("jwt_token", token, common.GConfig.Http.LoginExpire, "/", "crontab.mincox.cn", false, true)
 	// 返回结果
 	response.Success(ctx, gin.H{"userInfo": common.ToUserDto(user)}, "登录成功")
 	return

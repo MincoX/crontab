@@ -1,4 +1,4 @@
 #!/bin/sh
 
-./app -config config.yaml &
-./main -config config.yaml
+./main -config config.yaml &
+./app -config config.yaml
