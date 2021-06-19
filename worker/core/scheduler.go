@@ -80,12 +80,10 @@ func (_self *Scheduler) TrySchedule() (scheduleAfter time.Duration) {
 	// 如果任务计划表为空话，此时设置 60s 后再尝试调度
 	if len(_self.jobPlanTable) == 0 {
 		scheduleAfter = time.Duration(common.GConfig.Worker.ScheduleSleep) * time.Second
-		logger.Info.Printf("暂时没有可调度的任务，下一次调度 %s 后触发！", scheduleAfter.String())
 		return
 	}
 
-	logger.Debug.Printf("调度表共 %s 个任务待调度 ", len(_self.jobPlanTable))
-
+	logger.Info.Printf("调度表共 %s 个任务待调度 ", len(_self.jobPlanTable))
 	// 当前时间
 	now = time.Now()
 	// 遍历所有任务
