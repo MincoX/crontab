@@ -2,12 +2,10 @@ package controller
 
 import (
 	"fmt"
-	"net/http"
-	"strconv"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"net/http"
+	"strconv"
 
 	"crontab/master/common"
 	"crontab/master/logger"
@@ -126,8 +124,7 @@ func JobDelete(ctx *gin.Context) {
 
 	// 删除 mysql 中任务
 	if err = common.GMsql.DB.Model(model.Job{}).Where("name = ?", name).Updates(map[string]interface{}{
-		"deleted_at": time.Now(),
-		"status":     common.StatusTyp["已删除"],
+		"status": common.StatusTyp["已删除"],
 	}).Error; err != nil {
 		response.Fail(ctx, fmt.Sprintf("mysql 任务删除失败： %s", err), nil)
 		return

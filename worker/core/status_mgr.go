@@ -48,7 +48,7 @@ func (_self *StatusMgr) updateStatusLoop() {
 		case statusEvent = <-_self.OnceChan:
 			if err = common.GMsql.DB.Model(&model.Job{}).Where("name = ?", statusEvent.Job.Name).
 				Updates(map[string]interface{}{
-					//"num":       1,
+					"num":       1,
 					"status":    statusEvent.StatusTyp,
 					"next_time": statusEvent.NextTime,
 				}).Error; err != nil {
