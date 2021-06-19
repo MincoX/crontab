@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  crontab:
+    container_name: crontab
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: go/crontab
+    ports:
+      - "10002:10002"
+    volumes:
+      - /root/project/crontab/config.yaml:/src/crontab/config.yaml \
+      - /root/project/crontab/logs:/src/crontab/logs \
