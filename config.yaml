@@ -1,0 +1,45 @@
+http:
+  addr: 0.0.0.0:10002
+  login_expire: 3600 # 单位秒 1s * 60 * 60
+
+etcd:
+  dial_timeout: 3 # 秒
+  endpoints: [
+      "47.98.56.172:2379"
+  ]
+
+redis:
+  addr: 47.98.56.172:6379
+  password: ""
+  read_timeout: 3 # 秒
+  write_timeout: 3 # 秒
+  db: 0
+
+mysql:
+  driver_name: mysql
+  host: 47.98.56.172
+  port: 3306
+  database: crontabService
+  username: root
+  password: mincoroot
+  charset: utf8
+  loc: Local
+  max_idle_cons: 10 # 空闲连接池中连接的最大数量
+  max_open_cons: 100 # 打开数据库连接的最大数量
+  max_lifetime: 3600 # 连接可复用的最大时间 1s * 60 * 60
+
+mongodb:
+  #  addr: mongodb://MincoX:mincoroot@47.98.56.172:27017/admin
+  addr: 47.98.56.172:27017
+  connect_timeout: 3 # 秒
+  db: crontabService
+  auth_db: admin
+  username: minco
+  password: mincoroot
+  poolLimit: 100
+
+worker:
+  schedule_sleep: 60 # 当计划表为空时，sleep 60秒后再次执行调度
+  bash_path: "D:\\Cygwin\\bin\\bash.exe"
+  log_batch_size: 200
+  log_commit_timeout: 10 # 日志 batch 没有满的情况下，每 10 秒插入一次
