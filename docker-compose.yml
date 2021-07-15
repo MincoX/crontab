@@ -11,5 +11,6 @@ services:
     ports:
       - "10002:10002"
     volumes:
+      - /root/project/crontab/scripts:/src/crontab/scripts
       - /root/project/crontab/config.yaml:/src/crontab/config.yaml
       - /root/project/crontab/logs:/src/crontab/logs
