@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"net/http"
 	"strconv"
 
 	"crontab/master/common"
@@ -60,6 +59,7 @@ func JobAdd(ctx *gin.Context) {
 		err      error
 		sqlRes   *gorm.DB
 		postData *common.Job
+		job      *model.Job
 	)
 
 	name := ctx.PostForm("name")
@@ -67,6 +67,11 @@ func JobAdd(ctx *gin.Context) {
 	cronExpr := ctx.PostForm("cronExpr")
 	jobType, _ := strconv.Atoi(ctx.PostForm("typ"))
 	user, _ := ctx.Get("user")
+
+	if common.GMsql.DB.Where("name = ?", name).First(&job).RowsAffected != 0 {
+		response.Fail(ctx, "任务已存在，请重新输入", nil)
+		return
+	}
 
 	// 保存到 mysql
 	if sqlRes = common.GMsql.DB.Create(&model.Job{
@@ -117,20 +122,17 @@ func JobDelete(ctx *gin.Context) {
 		return
 	}
 
+	// etcd 中的任务已被删除
 	if oldJob == nil {
-		response.Response(ctx, http.StatusOK, 0, nil, "任务不存在")
-		return
+		// 删除 mysql 中任务
+		if err = common.GMsql.DB.Model(model.Job{}).Where("name = ?", name).Updates(map[string]interface{}{
+			"status": common.StatusTyp["已删除"],
+		}).Error; err != nil {
+			response.Fail(ctx, fmt.Sprintf("mysql 任务删除失败： %s", err), nil)
+			return
+		}
 	}
 
-	// 删除 mysql 中任务
-	if err = common.GMsql.DB.Model(model.Job{}).Where("name = ?", name).Updates(map[string]interface{}{
-		"status": common.StatusTyp["已删除"],
-	}).Error; err != nil {
-		response.Fail(ctx, fmt.Sprintf("mysql 任务删除失败： %s", err), nil)
-		return
-	}
-
-	// TODO error log
 	response.Success(ctx, gin.H{"jobName": oldJob}, nil)
 	return
 
