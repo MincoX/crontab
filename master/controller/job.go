@@ -21,6 +21,7 @@ func JobList(ctx *gin.Context) {
 		totalCount  int64
 		err         error
 		reqTyp      string
+		orFilter    map[string]interface{}
 		whereFilter map[string]interface{}
 		jobs        []model.Job
 	)
@@ -32,14 +33,16 @@ func JobList(ctx *gin.Context) {
 	// reqTyp：0 表示查询任务状态为已完成或已删除的所有任务；1 表示查询所有可以调度执行的任务
 	if reqTyp == "1" {
 		// 所有可以调度执行的任务
-		whereFilter = map[string]interface{}{"status": []int64{0, 1, 2, 3}}
+		whereFilter = map[string]interface{}{"status": []int64{0, 1, 2}}
+		orFilter = map[string]interface{}{"status": 3, "typ": 0}
 	} else {
 		// 所有已经删除或者单次任务状态为已完成的任务
 		whereFilter = map[string]interface{}{"status": []int64{4, 5}}
+		orFilter = map[string]interface{}{"status": 3, "typ": 1}
 	}
 
 	// 获取任务列表
-	jobDB := common.GMsql.DB.Model(&model.Job{}).Where(whereFilter)
+	jobDB := common.GMsql.DB.Model(&model.Job{}).Where(whereFilter).Or(orFilter)
 	if jobDB.Error != nil {
 		logger.Error.Printf("查询任务列表失败: %s ", err)
 		response.Fail(ctx, fmt.Sprintf("任务查询失败： %s", err), nil)
